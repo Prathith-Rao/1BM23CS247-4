@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int* stack;   // Main stack to store elements
+    int* minStack; // Stack to store the minimum element at each level
+    int topIndex;  // Index to keep track of the top element in the stack
+    int capacity;  // Capacity of the stack (both stacks will have the same capacity)
+} MinStack;
+
+// Function to create a MinStack object
+MinStack* minStackCreate() {
+    MinStack* obj = (MinStack*)malloc(sizeof(MinStack));
+    obj->capacity = 1000;  // You can adjust the capacity as needed
+    obj->stack = (int*)malloc(sizeof(int) * obj->capacity);
+    obj->minStack = (int*)malloc(sizeof(int) * obj->capacity);
+    obj->topIndex = -1;
+    return obj;
+}
+
+// Function to push an element onto the stack
+void minStackPush(MinStack* obj, int val) {
+    obj->topIndex++;
+    obj->stack[obj->topIndex] = val;
+
+    // If minStack is empty, push the value itself, else push the minimum of val and the top of minStack
+    if (obj->topIndex == 0) {
+        obj->minStack[obj->topIndex] = val;
+    } else {
+        obj->minStack[obj->topIndex] = (val < obj->minStack[obj->topIndex - 1]) ? val : obj->minStack[obj->topIndex - 1];
+    }
+}
+
+// Function to pop an element from the stack
+void minStackPop(MinStack* obj) {
+    if (obj->topIndex >= 0) {
+        obj->topIndex--;
+    }
+}
+
+// Function to get the top element of the stack
+int minStackTop(MinStack* obj) {
+    if (obj->topIndex >= 0) {
+        return obj->stack[obj->topIndex];
+    }
+    return -1;  // Return an invalid value if stack is empty
+}
+
+// Function to get the minimum element in the stack
+int minStackGetMin(MinStack* obj) {
+    if (obj->topIndex >= 0) {
+        return obj->minStack[obj->topIndex];
+    }
+    return -1;  // Return an invalid value if stack is empty
+}
+
+// Function to free the memory used by the MinStack
+void minStackFree(MinStack* obj) {
+    free(obj->stack);
+    free(obj->minStack);
+    free(obj);
+}
+
+
+/**
+ * Your MinStack struct will be instantiated and called as such:
+ * MinStack* obj = minStackCreate();
+ * minStackPush(obj, val);
+ 
+ * minStackPop(obj);
+ 
+ * int param_3 = minStackTop(obj);
+ 
+ * int param_4 = minStackGetMin(obj);
+ 
+ * minStackFree(obj);
+*/

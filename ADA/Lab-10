@@ -1,0 +1,136 @@
+n-Queens:
+
+#include <stdio.h>
+#include <stdbool.h>
+
+bool place(int[], int);
+void printSolution(int[], int);
+void nQueens(int);
+
+int main() {
+    int n;
+    printf("Enter the number of queens: ");
+    scanf("%d", &n);
+    nQueens(n);
+    return 0;
+}
+
+void nQueens(int n) {
+    int x[10];
+    int count = 0;
+    int k = 1;
+    while (k != 0) {
+        x[k] = x[k] + 1;
+        while (x[k] <= n && !place(x, k)) {
+            x[k] = x[k] + 1;
+        }
+        if (x[k] <= n) {
+            if (k == n) {
+                count++;
+                printf("Solution %d: ", count);
+                printSolution(x, n);
+            } else {
+                k++;
+                x[k] = 0;
+            }
+        } else {
+            k--;
+        }
+    }
+    printf("Total solutions: %d\n", count);
+}
+
+bool place(int x[10], int k) {
+    int i;
+    for (i = 1; i < k; i++) {
+        if ((x[i] == x[k]) || (i - x[i] == k - x[k]) || (i + x[i] == k + x[k])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void printSolution(int x[10], int n) {
+    int i;
+    for (i = 1; i <= n; i++) {
+        printf("(%d, %d) ", i, x[i]);
+    }
+    printf("\n");
+}
+
+Output:
+Enter the number of queens: 4
+Solution 1: (1, 2) (2, 4) (3, 1) (4, 3)
+Solution 2: (1, 3) (2, 1) (3, 4) (4, 2)
+Total solutions: 2
+
+
+Heap Sort:
+#include <stdio.h>
+
+void heapify(int arr[], int n, int i) {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < n && arr[l] > arr[largest]) {
+        largest = l;
+    }
+
+    if (r < n && arr[r] > arr[largest]) {
+        largest = r;
+    }
+
+    if (largest != i) {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+
+    for (int i = n - 1; i > 0; i--) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[100], n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter %d elements:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    heapSort(arr, n);
+
+    printf("Sorted array is:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+Output:
+Enter number of elements: 7
+Enter 7 elements:
+50 25 30 75 100 45 80
+Sorted array is:
+25 30 45 50 75 80 100 

@@ -1,0 +1,88 @@
+Binary Tree Level Order Traversal II
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+int** levelOrderBottom(struct TreeNode* root, int* returnSize, int** returnColumnSizes) {
+    if (root == NULL) {
+        *returnSize = 0;
+        *returnColumnSizes = NULL;
+        return NULL;
+    }
+
+    // Initialize a queue for BFS
+    struct TreeNode** queue = (struct TreeNode**)malloc(2000 * sizeof(struct TreeNode*));  // Max 2000 nodes
+    int front = 0, rear = 0;
+    
+    // Start with the root
+    queue[rear++] = root;
+    
+    // Result array to store the bottom-up level order
+    int** result = (int**)malloc(2000 * sizeof(int*));  // Max 2000 levels
+    *returnColumnSizes = (int*)malloc(2000 * sizeof(int));  // Array to store the sizes of each level
+    *returnSize = 0;
+    
+    // BFS traversal
+    while (front < rear) {
+        int levelSize = rear - front;
+        int* level = (int*)malloc(levelSize * sizeof(int));
+        
+        // Process the current level
+        for (int i = 0; i < levelSize; i++) {
+            struct TreeNode* node = queue[front++];
+            level[i] = node->val;
+            
+            // Add children to the queue
+            if (node->left) {
+                queue[rear++] = node->left;
+            }
+            if (node->right) {
+                queue[rear++] = node->right;
+            }
+        }
+        
+        // Store the current level result
+        result[*returnSize] = level;
+        (*returnColumnSizes)[*returnSize] = levelSize;
+        (*returnSize)++;
+    }
+    
+    // Reallocate the result and returnColumnSizes to the exact size
+    result = (int**)realloc(result, (*returnSize) * sizeof(int*));
+    *returnColumnSizes = (int*)realloc(*returnColumnSizes, (*returnSize) * sizeof(int));
+
+    // Reverse the result for bottom-up level order
+    for (int i = 0; i < *returnSize / 2; i++) {
+        int* temp = result[i];
+        result[i] = result[*returnSize - i - 1];
+        result[*returnSize - i - 1] = temp;
+        
+        int tempSize = (*returnColumnSizes)[i];
+        (*returnColumnSizes)[i] = (*returnColumnSizes)[*returnSize - i - 1];
+        (*returnColumnSizes)[*returnSize - i - 1] = tempSize;
+    }
+    
+    // Free the queue memory
+    free(queue);
+    
+    return result;
+}
+
+Output:
+Input
+root =
+[3,9,20,null,null,15,7]
+Output
+[[15,7],[9,20],[3]]
+Expected
+[[15,7],[9,20],[3]]

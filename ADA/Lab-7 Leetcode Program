@@ -1,0 +1,65 @@
+-ALL ELEMENTS IN TWO BINARY SEARCH TREE
+Given two binary search trees root1 and root2, return a list containing all the integers from both trees sorted in ascending order.
+
+
+ANSWER:
+int* getAllElements(struct TreeNode* root1, struct TreeNode* root2, int* returnSize) {
+    int* arr1 = (int*)malloc(1000 * sizeof(int));  // Max size of tree can be assumed to be 1000 for simplicity
+    int* arr2 = (int*)malloc(1000 * sizeof(int));
+    int size1 = 0, size2 = 0;
+    void inorder(struct TreeNode* root, int* result, int* size) {
+    if (root == NULL) return;
+    inorder(root->left, result, size);
+    result[(*size)++] = root->val;  // Add the current node value to the result
+    inorder(root->right, result, size);
+}
+
+// Function to merge two sorted arrays into a single sorted array
+int* merge(int* arr1, int size1, int* arr2, int size2, int* returnSize) {
+    int* result = (int*)malloc((size1 + size2) * sizeof(int));
+    int i = 0, j = 0, k = 0;
+    
+    while (i < size1 && j < size2) {
+        if (arr1[i] < arr2[j]) {
+            result[k++] = arr1[i++];
+        } else {
+            result[k++] = arr2[j++];
+        }
+    }
+    
+    // Copy remaining elements of arr1
+    while (i < size1) {
+        result[k++] = arr1[i++];
+    }
+    
+    // Copy remaining elements of arr2
+    while (j < size2) {
+        result[k++] = arr2[j++];
+    }
+    
+    *returnSize = size1 + size2;  // Total size of the merged array
+    return result;
+}
+
+    
+    // Traverse both trees and store elements in sorted arrays
+    inorder(root1, arr1, &size1);
+    inorder(root2, arr2, &size2);
+    
+    // Merge the two sorted arrays
+    int* result = merge(arr1, size1, arr2, size2, returnSize);
+    
+    // Free the temporary arrays
+    free(arr1);
+    free(arr2);
+    
+    return result;
+}
+
+// Helper function to create a new TreeNode
+struct TreeNode* newNode(int val) {
+    struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    node->val = val;
+    node->left = node->right = NULL;
+    return node;
+}
